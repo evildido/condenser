@@ -141,11 +141,8 @@ describe('TransactionSaga', () => {
                         memo: operation.memo,
                         permlink: 'mock-permlink-123',
                         json_metadata: JSON.stringify(operation.json_metadata),
-                        title: new Buffer(
-                            (operation.title || '').trim(),
-                            'utf-8'
-                        ),
-                        body: new Buffer(operation.body, 'utf-8'), // TODO: new Buffer is deprecated, prefer Buffer.from()
+                        title: (operation.title || '').trim(),
+                        body: operation.body,
                     },
                 ],
             ];
@@ -162,10 +159,7 @@ describe('TransactionSaga', () => {
                 operation.parent_permlink
             );
             const actual = gen.next('mock-permlink-123').value;
-            const expected = Buffer.from(
-                createPatch(originalBod, operation.body),
-                'utf-8'
-            );
+            const expected = createPatch(originalBod, operation.body);
             expect(actual[0][1].body).toEqual(expected);
         });
         it('should return body as body value if patch is larger than body.', () => {
@@ -179,7 +173,7 @@ describe('TransactionSaga', () => {
                 operation.parent_permlink
             );
             const actual = gen.next('mock-permlink-123').value;
-            const expected = Buffer.from(operation.body, 'utf-8');
+            const expected = operation.body;
             expect(actual[0][1].body).toEqual(expected, 'utf-8');
         });
     });
